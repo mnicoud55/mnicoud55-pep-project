@@ -8,4 +8,6 @@ public interface AccountDAO {
 
     public Account getAccountByUsername(String username);
 
+    public Account getAccountById(int id);
+
 }

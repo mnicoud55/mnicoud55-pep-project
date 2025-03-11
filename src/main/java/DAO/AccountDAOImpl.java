@@ -64,9 +64,34 @@ public class AccountDAOImpl implements AccountDAO {
             
             ResultSet queryResultSet = ps.executeQuery();
             if (queryResultSet.next()) {
-                return new Account(queryResultSet.getInt("account_id"), 
-                queryResultSet.getString("username"),
-                queryResultSet.getString("password"));
+                return new Account(
+                    queryResultSet.getInt("account_id"), 
+                    queryResultSet.getString("username"),
+                    queryResultSet.getString("password")
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public Account getAccountById(int id) {
+        Connection conn = ConnectionUtil.getConnection();
+        try {
+            String sql = "SELECT * FROM account WHERE account_id = ?;";
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, id);
+            
+            ResultSet queryResultSet = ps.executeQuery();
+            if (queryResultSet.next()) {
+                return new Account(
+                    queryResultSet.getInt("account_id"), 
+                    queryResultSet.getString("username"),
+                    queryResultSet.getString("password")
+                );
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());

@@ -11,7 +11,7 @@ public interface MessageDAO {
 
     public Message deleteMessage(int id);
 
-    public Message updateMessage(int id);
+    public Message updateMessage(int id, String text);
 
     public List<Message> getAllMessagesWithAccountId(int accountId);
 }
