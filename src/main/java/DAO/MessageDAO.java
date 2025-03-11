@@ -3,7 +3,7 @@ import java.util.*;
 import Model.*;
 
 public interface MessageDAO {
-    public Message creatMessage(Message newMessage);
+    public Message createMessage(Message newMessage);
 
     public List<Message> getAllMessages();
 
@@ -13,5 +13,4 @@ public interface MessageDAO {
 
     public Message updateMessage(int id, String text);
 
-    public List<Message> getAllMessagesWithAccountId(int accountId);
 }
