@@ -7,13 +7,9 @@ import Model.Message;
 import Util.ConnectionUtil;
 
 public class MessageDAOImpl implements MessageDAO {
-    private AccountDAO accDAO = new AccountDAOImpl();
 
     @Override
     public Message createMessage(Message newMessage) {
-        if (newMessage.getMessage_text() == null || newMessage.getMessage_text().equals("") || newMessage.getMessage_text().length() > 255 || accDAO.getAccountById(newMessage.getPosted_by()) == null) {
-            return null;
-        }
         Connection conn = ConnectionUtil.getConnection();
         try {
             String sql = "INSERT INTO message (posted_by, message_text, time_posted_epoch) VALUES (?,?,?);";
@@ -101,13 +97,12 @@ public class MessageDAOImpl implements MessageDAO {
 
             ps.executeUpdate();
 
-            if (message != null) 
-                return new Message(
-                    id,
-                    message.getPosted_by(),
-                    message.getMessage_text(),
-                    message.getTime_posted_epoch()
-                );
+            return new Message(
+                id,
+                message.getPosted_by(),
+                message.getMessage_text(),
+                message.getTime_posted_epoch()
+            );
             
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -117,9 +112,6 @@ public class MessageDAOImpl implements MessageDAO {
 
     @Override
     public Message updateMessage(int id, String text) {
-        if (text == null || text.length() < 1 || text.length() > 255) {
-            return null;
-        }
         Connection conn = ConnectionUtil.getConnection();
         try {
             String sql = "UPDATE message SET message_text = ? WHERE message_id = ?;";
@@ -146,4 +138,28 @@ public class MessageDAOImpl implements MessageDAO {
         return null;
     }
 
+    @Override
+    public List<Message> getAllMessagesWithAccountId(int accountId) {
+        Connection conn = ConnectionUtil.getConnection();
+        List<Message> messages = new ArrayList<Message>();
+        try {
+            String sql = "SELECT * FROM message WHERE posted_by = ?;";
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setInt(1,accountId);
+
+            ResultSet queryResultSet = ps.executeQuery();
+            while (queryResultSet.next()) {
+                messages.add(new Message(
+                    queryResultSet.getInt("message_id"),
+                    queryResultSet.getInt("posted_by"),
+                    queryResultSet.getString("message_text"),
+                    queryResultSet.getLong("time_posted_epoch")
+                ));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return messages;
+    }
 }
